@@ -14,6 +14,12 @@ type Channel = {
 	event_count: number;
 };
 
+type TokenClaims = {
+	scope: string;
+	channel?: string;
+	channels?: string[];
+};
+
 export async function getChannels(
 	this: ILoadOptionsFunctions,
 	filter?: string,
@@ -21,10 +27,22 @@ export async function getChannels(
 	let channels: Channel[] = [];
 
 	try {
-		const response = await zooidApiRequest.call(this, 'GET', '/api/v1/channels');
-		channels = response.channels ?? response;
+		const [channelsResponse, claims] = await Promise.all([
+			zooidApiRequest.call(this, 'GET', '/api/v1/channels'),
+			zooidApiRequest.call(this, 'GET', '/api/v1/tokens/claims') as Promise<TokenClaims>,
+		]);
+
+		channels = channelsResponse.channels ?? channelsResponse;
+
+		// Publish tokens are scoped to specific channels
+		if (claims.scope === 'publish') {
+			const allowed = claims.channels ?? (claims.channel ? [claims.channel] : []);
+			if (allowed.length > 0) {
+				channels = channels.filter((ch) => allowed.includes(ch.id));
+			}
+		}
 	} catch {
-		// token may not have permission to list channels
+		// token may not have permission
 	}
 
 	let results: INodeListSearchItems[] = channels.map((ch) => ({

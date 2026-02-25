@@ -48,7 +48,7 @@ export class ZooidApi implements ICredentialType {
 	test: ICredentialTestRequest = {
 		request: {
 			baseURL: '={{$credentials.serverUrl}}',
-			url: '/.well-known/zooid.json',
+			url: '/api/v1/tokens/claims',
 			method: 'GET',
 		},
 	};
