@@ -4,7 +4,7 @@ import { jsonSchemaToResourceFields } from '../shared/schemaMapper';
 
 type ChannelResponse = {
 	id: string;
-	schema: Record<string, unknown> | null;
+	config: { types: Record<string, { schema: unknown }> } | null;
 	strict: boolean;
 };
 
@@ -21,13 +21,13 @@ export async function getEventSchema(this: ILoadOptionsFunctions): Promise<Resou
 		const channels: ChannelResponse[] = response.channels ?? response;
 		const channel = channels.find((ch) => ch.id === channelId);
 
-		if (!channel?.schema) {
+		if (!channel?.config?.types) {
 			return { fields: [] };
 		}
 
 		// Get the schema for the specific event type, or the first one
-		const schemaKey = eventType || Object.keys(channel.schema)[0];
-		const typeSchema = schemaKey ? channel.schema[schemaKey] : null;
+		const schemaKey = eventType || Object.keys(channel.config.types)[0];
+		const typeSchema = schemaKey ? channel.config.types[schemaKey]?.schema : null;
 
 		if (!typeSchema) {
 			return { fields: [] };

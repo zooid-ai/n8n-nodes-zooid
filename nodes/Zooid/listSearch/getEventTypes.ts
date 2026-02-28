@@ -7,7 +7,7 @@ import { zooidApiRequest } from '../shared/transport';
 
 type ChannelResponse = {
 	id: string;
-	schema: Record<string, unknown> | null;
+	config: { types: Record<string, { schema: unknown }> } | null;
 };
 
 export async function getEventTypes(
@@ -25,11 +25,11 @@ export async function getEventTypes(
 		const channels: ChannelResponse[] = response.channels ?? response;
 		const channel = channels.find((ch) => ch.id === channelId);
 
-		if (!channel?.schema) {
+		if (!channel?.config?.types) {
 			return { results: [] };
 		}
 
-		let results: INodeListSearchItems[] = Object.keys(channel.schema).map((type) => ({
+		let results: INodeListSearchItems[] = Object.keys(channel.config.types).map((type) => ({
 			name: type,
 			value: type,
 		}));
