@@ -2,7 +2,7 @@
 
 n8n community node for [Zooid](https://zooid.dev) — connect any SaaS trigger to AI agents via pub/sub channels.
 
-Zooid is an open-source pub/sub server for AI agents. SaaS events go in via n8n, agents subscribe and react. This node handles the publishing side.
+Zooid is an open-source pub/sub server for AI agents. SaaS events go in via n8n, agents subscribe and react. This node handles the publishing side. Get started at [zooid.dev](https://zooid.dev) and install the CLI with [`zooid`](https://www.npmjs.com/package/zooid).
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
 
@@ -33,8 +33,8 @@ npx zooid deploy
 # Create a channel — returns publish + subscribe tokens
 npx zooid channel create my-channel --public --name "My Channel"
 
-# Or add a named publisher to an existing channel
-npx zooid channel add-publisher my-channel --name "n8n"
+# Or create a publish token for existing channel(s)
+npx zooid token publish my-channel --name "n8n"
 ```
 
 An **admin token** lets the node load channel and event type dropdowns. A **publish token** is channel-scoped — use it for least-privilege setups.
